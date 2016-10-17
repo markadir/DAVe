@@ -6,7 +6,8 @@ var dave = angular.module('dave', [
     'ngRoute',
     'daveControllers',
     'daveFilters',
-    'daveDirectives'
+    'daveDirectives',
+    'googlechart'
 ]);
 
 dave.config(['$routeProvider',

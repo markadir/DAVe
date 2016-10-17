@@ -1944,6 +1944,61 @@ daveControllers.controller('RiskLimitHistory', ['$scope', '$routeParams', '$http
         $scope.rlSource = [];
         $scope.existingRecords = [];
         $scope.error = "";
+        $scope.historyChart = {
+            "type": "ComboChart",
+            "displayed": false,
+            "data": {
+                "cols": [
+                    {
+                        "id": "time",
+                        "label": "Time",
+                        "type": "datetime"
+                    },
+                    {
+                        "id": "warning",
+                        "label": "Warning limit",
+                        "type": "number"
+                    },
+                    {
+                        "id": "throttle",
+                        "label": "Throttle limit",
+                        "type": "number"
+                    },
+                    {
+                        "id": "reject",
+                        "label": "Reject limit",
+                        "type": "number"
+                    },
+                    {
+                        "id": "util",
+                        "label": "Utilization",
+                        "type": "number"
+                    }
+                ],
+                "rows": []
+            },
+            "options": {
+                seriesType: "area",
+                series: {3: {type: 'line'}},
+                //"title": "Risk Limit Utilization",
+                "isStacked": "false",
+                "fill": 20,
+                "displayExactValues": false,
+                height: 200,
+                "vAxis": {
+                    "title": "Utilization",
+                    "format": "decimal",
+                    "gridlines": {
+                        "count": 10
+                    }
+                },
+                "hAxis": {
+                    "format":"HH:mm:ss",
+                    "title": "Time"
+                },
+                "legend": {"position": 'bottom'}
+            }
+        };
         $scope.rlChartData = [];
         $scope.ordering="-received";
 
@@ -1958,6 +2013,7 @@ daveControllers.controller('RiskLimitHistory', ['$scope', '$routeParams', '$http
             $scope.error = "";
             $scope.processRiskLimits(data);
             $scope.prepareGraphData(data);
+            $scope.prepareHistoryChart(data);
             $scope.initialLoad = false;
         }).error(function(data, status, headers, config) {
             $scope.error = "Server returned status " + status;
@@ -2101,6 +2157,7 @@ daveControllers.controller('RiskLimitHistory', ['$scope', '$routeParams', '$http
                 $scope.error = "";
                 $scope.processRiskLimits(data);
                 $scope.prepareGraphData(data);
+                $scope.prepareHistoryChart(data);
             }).error(function(data, status, headers, config) {
                 $scope.error = "Server returned status " + status;
             });
@@ -2111,6 +2168,31 @@ daveControllers.controller('RiskLimitHistory', ['$scope', '$routeParams', '$http
                 $interval.cancel($scope.refresh);
             }
         });
+
+        $scope.prepareHistoryChart = function(data)
+        {
+            rows = [];
+
+            var index;
+
+            for (index = 0; index < data.length; ++index) {
+                tick = {
+                    "c": [
+                            {"v": new Date(data[index].received)},
+                            {"v": data[index].warningLevel + 0},
+                            {"v": data[index].throttleLevel + 0},
+                            {"v": data[index].rejectLevel + 0},
+                            {"v": data[index].utilization + 0}
+                         ]
+                };
+
+                //console.log(tick);
+
+                rows.push(tick);
+            }
+
+            $scope.historyChart.data.rows = rows;
+        };
 
         $scope.prepareGraphData = function(data) {
             $scope.rlChartData = []

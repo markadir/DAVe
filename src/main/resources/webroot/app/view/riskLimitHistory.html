@@ -24,6 +24,10 @@
                 <div id="rlHistoryChart" line-chart line-data="rlChartData" line-xkey='period' line-ykeys='["utilization", "warningLevel", "throttleLevel", "rejectLevel"]' line-labels='["Limit utilization", "Warning level", "Throttle level", "Stop level"]' line-colors='["#31C0BE", "#c7254e", "#800000", "#808000"]'></div>
             </div>
 
+            <div class="panel-body" ng-if="historyChart.data.rows.length > 0">
+                <div id="historyChart" google-chart chart="historyChart" style="height:200px; width:100%;"></div>
+            </div>
+
             <!-- /.panel-heading -->
             <div class="panel-body" ng-if="rlHistory.length > 0">
                 <table class="table table-striped table-bordered table-hover">
